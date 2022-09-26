@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dataplane"
+version = "0.0.1"
+authors = [
+  { name="Saul Frank" }, {name ="Dataplane, Inc."}
+]
+description = "The data engineering library to build robust, reliable and on time data pipelines in Python."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+]
+
+keywords = ["workflow", "data-science", "data", "airflow", "etl", "dataplane", "data-engineering", "data-pipelines", "datawarehouse", "automation", "data-analysis", "scheduler"]
+
+[project.urls]
+"Homepage" = "https://dataplane.app"
+"Github" = "https://github.com/dataplane-app/dataplane-python-package"
+"Issues" = "https://github.com/dataplane-app/dataplane/issues"
+"Feedback" = "https://github.com/dataplane-app/dataplane/discussions"
