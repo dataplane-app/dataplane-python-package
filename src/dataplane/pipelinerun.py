@@ -1,7 +1,7 @@
-import os, io, redis
+import os, io
+import redis
 from datetime import datetime, timedelta
 import pandas as pd
-
 
 def RedisCheck(r):
     try:
@@ -13,14 +13,12 @@ def RedisCheck(r):
 
 """
 StoreKey: is the key to look up for retrieval later on. 
-RedisHost: host of Redis e.g localhost 
-RedisPort: default 6379
-RedisDB: default 0
+Redis: e.g. Redis = redis.Redis(host='redis-service', port=6379, db=0)
 DataFrame: Pandas dataframe to pass
 Expire: Expires the data if true.
 ExpireDuration: If expires is true, how much time to expire. Default 15 mins
 """
-def RedisStore(StoreKey, DataFrame, RedisHost="localhost", RedisPort=6379, RedisDB=0, Expire=True, ExpireDuration=timedelta(minutes=15)):
+def RedisStore(StoreKey, DataFrame, Redis, Expire=True, ExpireDuration=timedelta(minutes=15)):
 
     # Start the timer
     start  = datetime.now()
@@ -28,8 +26,7 @@ def RedisStore(StoreKey, DataFrame, RedisHost="localhost", RedisPort=6379, Redis
     InsertKey = StoreKey+ "-" +os.getenv("DP_RUNID")
 
     # Connect to Redis
-    r = redis.Redis(host='redis-service', port=6379, db=0)
-    if RedisCheck(r) == False:
+    if RedisCheck(Redis) == False:
         raise Exception("Redis connection failed.")
 
     buffer = io.BytesIO()
@@ -37,10 +34,33 @@ def RedisStore(StoreKey, DataFrame, RedisHost="localhost", RedisPort=6379, Redis
     buffer.seek(0) # re-set the pointer to the beginning after reading
 
     if Expire:
-        r.setex(StoreKey, ExpireDuration, value=buffer.read())
+        Redis.setex(StoreKey, ExpireDuration, value=buffer.read())
     else:
-        r.set(StoreKey, value=buffer.read())
+        Redis.set(StoreKey, value=buffer.read())
     
     duration = datetime.now() - start
 
-    return {"key":InsertKey, "result":"OK", "duration": str(duration)} 
+    return {"result":"OK", "duration": str(duration), "key":InsertKey} 
+
+
+"""
+StoreKey: is the key to look up for retrieval (set with RedisStore). 
+Redis: e.g. Redis = redis.Redis(host='redis-service', port=6379, db=0)
+"""
+def RedisGet(StoreKey, Redis):
+
+    # Start the timer
+    start  = datetime.now()
+
+    # Connect to Redis
+    if RedisCheck(Redis) == False:
+        raise Exception("Redis connection failed.")
+
+    # Retrieve dataframe from key
+    buffer = io.BytesIO(Redis.get(StoreKey))
+    buffer.seek(0)
+    df = pd.read_parquet(buffer)
+
+    duration = datetime.now() - start
+
+    return {"result":"OK", "duration": str(duration), "dataframe": df}
