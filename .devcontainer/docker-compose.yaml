@@ -1,0 +1,73 @@
+
+
+version: '3'
+
+services:
+
+
+  minio:
+    command: server /data --console-address ":9001"
+    image: minio/minio:RELEASE.2022-10-15T19-57-03Z
+    ports:
+      - 9010:9000
+      - 9011:9001
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: hello123
+    volumes:
+      - miniovolume:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+  
+  createbuckets:
+    image: minio/mc:RELEASE.2022-10-12T18-12-50Z
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 admin hello123;
+      /usr/bin/mc mb myminio/dataplanebucket;
+      # /usr/bin/mc policy set public myminio/dataplanebucket;
+      exit 0;
+      "
+
+  redis-service:
+    image: redis:7.0.5-bullseye
+    ports:
+      - 6379
+      
+  app:
+    # Using a Dockerfile is optional, but included for completeness.
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      # [Optional] You can use build args to set options. e.g. 'VARIANT' below affects the image in the Dockerfile
+
+    volumes:
+      # This is where VS Code should expect to find your project's source code and the value of "workspaceFolder" in .devcontainer/devcontainer.json
+      - ..:/workspace:cached
+
+      # Uncomment the next line to use Docker from inside the container. See https://aka.ms/vscode-remote/samples/docker-from-docker-compose for details.
+      # - /var/run/docker.sock:/var/run/docker.sock 
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: /bin/sh -c "while sleep 1000; do :; done"  
+    
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+    # Uncomment the next line to use a non-root user for all processes - See https://aka.ms/vscode-remote/containers/non-root for details.
+    # user: vscode
+
+    # Uncomment the next four lines if you will use a ptrace-based debugger like C++, Go, and Rust.
+    # cap_add:
+    #   - SYS_PTRACE
+    # security_opt:
+    #   - seccomp:unconfined
+
+volumes:
+  miniovolume:
+  

@@ -1,6 +1,7 @@
-import os, io
-import redis
+import os
+import io
 from datetime import datetime, timedelta
+import redis
 import pandas as pd
 
 def RedisCheck(r):
@@ -11,8 +12,7 @@ def RedisCheck(r):
         return False
     return True
 
-"""
-StoreKey: is the key to look up for retrieval later on. 
+""" StoreKey: is the key to look up for retrieval later on. 
 Redis: e.g. Redis = redis.Redis(host='redis-service', port=6379, db=0)
 DataFrame: Pandas dataframe to pass
 Expire: Expires the data if true.
@@ -34,9 +34,9 @@ def RedisStore(StoreKey, DataFrame, Redis, Expire=True, ExpireDuration=timedelta
     buffer.seek(0) # re-set the pointer to the beginning after reading
 
     if Expire:
-        Redis.setex(StoreKey, ExpireDuration, value=buffer.read())
+        Redis.setex(InsertKey, ExpireDuration, value=buffer.read())
     else:
-        Redis.set(StoreKey, value=buffer.read())
+        Redis.set(InsertKey, value=buffer.read())
     
     duration = datetime.now() - start
 
@@ -52,15 +52,17 @@ def RedisGet(StoreKey, Redis):
     # Start the timer
     start  = datetime.now()
 
+    InsertKey = StoreKey+ "-" +os.getenv("DP_RUNID")
+
     # Connect to Redis
     if RedisCheck(Redis) == False:
         raise Exception("Redis connection failed.")
 
     # Retrieve dataframe from key
-    buffer = io.BytesIO(Redis.get(StoreKey))
+    buffer = io.BytesIO(Redis.get(InsertKey))
     buffer.seek(0)
     df = pd.read_parquet(buffer)
 
     duration = datetime.now() - start
 
-    return {"result":"OK", "duration": str(duration), "dataframe": df}
+    return {"result":"OK", "duration": str(duration), "key":InsertKey,"dataframe": df}
