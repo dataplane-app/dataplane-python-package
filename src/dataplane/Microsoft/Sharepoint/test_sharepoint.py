@@ -1,10 +1,8 @@
 
 import os
-from .sharepoint_upload import SharepointUpload
-from .sharepoint_download import SharepointDownload
-from datetime import datetime, timedelta
+from .sharepoint_upload import sharepoint_upload
+from .sharepoint_download import sharepoint_download
 from nanoid import generate
-import time
 import os
 from dotenv import load_dotenv
 
@@ -29,7 +27,7 @@ def test_sharepoint():
     # SharepointUpload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, FileDescription="", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail")
     print(CURRENT_DIRECTORY)
     # Store the data with key hello - run id will be attached
-    rs = SharepointUpload(Host=HOST, 
+    rs = sharepoint_upload(Host=HOST, 
     TenantID=AZURE_TENANT_ID, 
     ClientID=AZURE_CLIENT_ID, 
     Secret=AZURE_CLIENT_SECRET, 
@@ -43,7 +41,7 @@ def test_sharepoint():
 
     # ---------- RETRIEVE PARQUET FROM S3 ------------
 
-    rs = SharepointDownload(Host=HOST, 
+    rs = sharepoint_download(Host=HOST, 
     TenantID=AZURE_TENANT_ID, 
     ClientID=AZURE_CLIENT_ID, 
     Secret=AZURE_CLIENT_SECRET, 

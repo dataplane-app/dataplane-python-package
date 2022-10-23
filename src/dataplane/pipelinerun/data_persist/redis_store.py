@@ -18,7 +18,7 @@ DataFrame: Pandas dataframe to pass
 Expire: Expires the data if true.
 ExpireDuration: If expires is true, how much time to expire. Default 15 mins
 """
-def RedisStore(StoreKey, DataFrame, Redis, Expire=True, ExpireDuration=timedelta(minutes=15)):
+def pipeline_redis_store(StoreKey, DataFrame, Redis, Expire=True, ExpireDuration=timedelta(minutes=15)):
 
     # Start the timer
     start  = datetime.now()
@@ -47,7 +47,7 @@ def RedisStore(StoreKey, DataFrame, Redis, Expire=True, ExpireDuration=timedelta
 StoreKey: is the key to look up for retrieval (set with RedisStore). 
 Redis: e.g. Redis = redis.Redis(host='redis-service', port=6379, db=0)
 """
-def RedisGet(StoreKey, Redis):
+def pipeline_redis_get(StoreKey, Redis):
 
     # Start the timer
     start  = datetime.now()

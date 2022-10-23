@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=61.0","redis>=1.0.0","pyarrow>1.0.0", "pandas>1.0.0"]
+requires = ["setuptools>=61.0","redis>=1.0.0","pyarrow>1.0.0", "pandas>1.0.0", "requests>1.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "dataplane"
-version = "0.0.5"
+version = "0.0.9"
 authors = [
   { name="Saul Frank" }, {name ="Dataplane, Inc."}
 ]

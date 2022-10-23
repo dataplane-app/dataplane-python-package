@@ -9,7 +9,7 @@ ProxyUse: Whether to use a proxy, true or false
 ProxyUrl: Proxy endpoint to use
 ProxyMethod: https or http, default https
 """
-def TeamsWebhookSend(Url, Message, ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
+def teams_webhook_send(Url, Message, ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
 
     # Start the timer
     start  = datetime.now()

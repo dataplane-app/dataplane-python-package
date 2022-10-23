@@ -1,7 +1,6 @@
 
 import os
-from .webhook_send import TeamsWebhookSend
-from datetime import datetime, timedelta
+from .webhook_send import teams_webhook_send
 from nanoid import generate
 import os
 from dotenv import load_dotenv
@@ -33,6 +32,6 @@ def test_webhook_send():
 
     # ---------- Send a webhook ------------
 
-    rs = TeamsWebhookSend(Url=WEBHOOK, Message=CardSend)
+    rs = teams_webhook_send(Url=WEBHOOK, Message=CardSend)
     print(rs)
     assert rs["result"]=="OK"

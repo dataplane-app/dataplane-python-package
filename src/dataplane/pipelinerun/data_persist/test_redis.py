@@ -1,10 +1,10 @@
 
 import os
-from .redis_store import RedisStore
-from .redis_store import RedisGet
+from .redis_store import pipeline_redis_store
+from .redis_store import pipeline_redis_get
 import redis
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import timedelta
 from nanoid import generate
 
 def test_redis_store():
@@ -29,14 +29,14 @@ def test_redis_store():
     # ---------- STORE PARQUET TO REDIS ------------
     
     # Store the data with key hello - run id will be attached
-    rs = RedisStore(StoreKey="hello", DataFrame=df, Redis=redisConnect, Expire=True, ExpireDuration=timedelta(minutes=15))
+    rs = pipeline_redis_store(StoreKey="hello", DataFrame=df, Redis=redisConnect, Expire=True, ExpireDuration=timedelta(minutes=15))
     print(rs)
     assert rs["result"]=="OK"
 
     # ---------- RETRIEVE PARQUET FROM REDIS ------------
 
     # Get the data
-    rsget = RedisGet(StoreKey="hello", Redis=redisConnect)
+    rsget = pipeline_redis_get(StoreKey="hello", Redis=redisConnect)
     print(rsget)
     df = rsget["dataframe"]
     print(df.shape[0])

@@ -15,7 +15,7 @@ ProxyMethod: https or http, default https
 FileConflict: "fail (default) | replace | rename"
 FileDescription: Sharepoint description for the file
 """
-def SharepointUpload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
+def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
 
     # Start the timer
     start  = datetime.now()

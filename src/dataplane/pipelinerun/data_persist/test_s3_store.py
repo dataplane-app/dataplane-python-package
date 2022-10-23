@@ -1,13 +1,11 @@
 
 import os
-from .s3_store import S3Store
-from .s3_store import S3Get
+from .s3_store import pipeline_s3_store
+from .s3_store import pipeline_s3_get
 import boto3
 from botocore.client import Config
 import pandas as pd
-from datetime import datetime, timedelta
 from nanoid import generate
-import time
 
 def test_s3_store():
 
@@ -40,14 +38,14 @@ def test_s3_store():
     # ---------- STORE PARQUET TO S3 ------------
     
     # Store the data with key hello - run id will be attached
-    rs = S3Store(StoreKey="s3me", DataFrame=df, S3Client=S3Connect, Bucket=bucket, Expire=False)
+    rs = pipeline_s3_store(StoreKey="s3me", DataFrame=df, S3Client=S3Connect, Bucket=bucket, Expire=False)
     print(rs)
     assert rs["result"]=="OK"
 
     # ---------- RETRIEVE PARQUET FROM S3 ------------
 
     # Get the data
-    rsget = S3Get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)
+    rsget = pipeline_s3_get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)
     print(rsget)
     df = rsget["dataframe"]
     print(df.shape[0])

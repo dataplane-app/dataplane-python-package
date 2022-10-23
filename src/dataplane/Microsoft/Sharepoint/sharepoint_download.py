@@ -14,7 +14,7 @@ ProxyUse: Whether to use a proxy, true or false
 ProxyUrl: Proxy endpoint to use
 ProxyMethod: https or http, default https
 """
-def SharepointDownload(Host, TenantID, ClientID, Secret, SiteName, LocalFilePath, SharepointFilePath, ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
+def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePath, SharepointFilePath, ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
 
     # Start the timer
     start  = datetime.now()
