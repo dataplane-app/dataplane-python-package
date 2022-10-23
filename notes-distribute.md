@@ -5,8 +5,7 @@
 2. In repo root directory build package
 ```shell
 python3 -m pip install --upgrade build
-rm -rf ./dist
-python3 -m build
+rm -rf ./dist && python3 -m build
 ```
 
 3. Remove previous version and distribute new package
