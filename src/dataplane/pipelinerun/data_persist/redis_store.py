@@ -2,7 +2,6 @@ import os
 import io
 from datetime import datetime, timedelta
 import redis
-import pandas as pd
 
 def RedisCheck(r):
     try:
@@ -61,6 +60,7 @@ def pipeline_redis_get(StoreKey, Redis):
     # Retrieve dataframe from key
     buffer = io.BytesIO(Redis.get(InsertKey))
     buffer.seek(0)
+    import pandas as pd
     df = pd.read_parquet(buffer)
 
     duration = datetime.now() - start

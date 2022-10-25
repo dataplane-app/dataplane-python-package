@@ -4,7 +4,6 @@ from .s3_store import pipeline_s3_store
 from .s3_store import pipeline_s3_get
 import boto3
 from botocore.client import Config
-import pandas as pd
 from nanoid import generate
 
 def test_s3_store():
@@ -19,6 +18,7 @@ def test_s3_store():
     "calories": [420, 380, 390],
     "duration": [50, 40, 45]
     }
+    import pandas as pd
     df = pd.DataFrame(data)
     dfrows = df.shape[0]
 
