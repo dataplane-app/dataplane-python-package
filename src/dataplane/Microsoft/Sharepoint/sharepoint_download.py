@@ -14,7 +14,7 @@ ProxyUse: Whether to use a proxy, true or false
 ProxyUrl: Proxy endpoint to use
 ProxyMethod: https or http, default https
 """
-def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePath, SharepointFilePath, ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
+def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePath, SharepointFilePath, Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
 
     # Start the timer
     start  = datetime.now()
@@ -63,11 +63,34 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePat
 
     SiteID = SiteID.json()
 
-    # ====== Get Item ID =====
-
+    # ====== Library
     # Note the target path must have a / prefix
     SharepointFilePath = SharepointFilePath.replace(" ", "%20")
-    url = f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drive/root:{SharepointFilePath}"
+    drive = "root"
+    if Library == "root":
+        # ====== Create an upload session =====
+        url = f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drive/root:{SharepointFilePath}"
+    else:
+
+        drive = ""
+        driveID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives?$select=name,id", headers=headers, json=payload, proxies=proxies)
+        if driveID.status_code != 200:
+            duration = datetime.now() - start
+            return {"result":"Fail", "reason":"Sharepoint get drives", "duration": str(duration), "status": driveID.status_code, "error": driveID.json()} 
+        
+        driveID = driveID.json()
+        for x in driveID["value"]:
+            if x["name"] == Library:
+                drive = x["id"]
+                break
+        
+        if drive =="":
+            duration = datetime.now() - start
+            return {"result":"Fail", "reason":"Sharepoint no drove found fpr library "+Library, "duration": str(duration)} 
+        
+        url = f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives/{drive}/root:{SharepointFilePath}"
+
+    # ====== Get Item ID =====
 
     
     ItemID = requests.request("GET", url, headers=headers, json=payload, proxies=proxies)

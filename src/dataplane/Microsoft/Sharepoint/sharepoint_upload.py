@@ -15,7 +15,7 @@ ProxyMethod: https or http, default https
 FileConflict: "fail (default) | replace | rename"
 FileDescription: Sharepoint description for the file
 """
-def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
+def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
 
     # Start the timer
     start  = datetime.now()
@@ -64,15 +64,36 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
 
     SiteID = SiteID.json()
 
-    # ====== Create an upload session =====
+    # print(SiteID)
 
-
+    # ====== Library
     # Note the target path must have a / prefix
     TargetFilePath = TargetFilePath.replace(" ", "%20")
-    url = f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drive/root:{TargetFilePath}:/createUploadSession"
+    drive = "root"
+    if Library == "root":
+        # ====== Create an upload session =====
+        url = f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drive/root:{TargetFilePath}:/createUploadSession"
+    else:
+
+        drive = ""
+        driveID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives?$select=name,id", headers=headers, json=payload, proxies=proxies)
+        if driveID.status_code != 200:
+            duration = datetime.now() - start
+            return {"result":"Fail", "reason":"Sharepoint get drives", "duration": str(duration), "status": driveID.status_code, "error": driveID.json()} 
+        
+        driveID = driveID.json()
+        for x in driveID["value"]:
+            if x["name"] == Library:
+                drive = x["id"]
+                break
+        
+        if drive =="":
+            duration = datetime.now() - start
+            return {"result":"Fail", "reason":"Sharepoint no drove found fpr library "+Library, "duration": str(duration)} 
+        
+        url = f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives/{drive}/root:{TargetFilePath}:/createUploadSession"
     
     # https://graph.microsoft.com/v1.0/sites/{name}.sharepoint.com/drive/root:/test/testing.xlsx:/createUploadSession
-    
     
     FileSize = os.path.getsize(SourceFilePath)
 

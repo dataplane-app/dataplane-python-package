@@ -3,7 +3,6 @@ import os
 from .redis_store import pipeline_redis_store
 from .redis_store import pipeline_redis_get
 import redis
-import pandas as pd
 from datetime import timedelta
 from nanoid import generate
 
@@ -19,6 +18,7 @@ def test_redis_store():
     "calories": [420, 380, 390],
     "duration": [50, 40, 45]
     }
+    import pandas as pd
     df = pd.DataFrame(data)
     dfrows = df.shape[0]
 

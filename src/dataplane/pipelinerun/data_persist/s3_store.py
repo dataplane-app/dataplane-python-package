@@ -1,6 +1,5 @@
 
 
-import pandas as pd
 # import requests
 import os
 from io import BytesIO
@@ -44,6 +43,7 @@ def pipeline_s3_get(StoreKey, S3Client, Bucket):
     # Retrieve dataframe from key
     # buffer = BytesIO()
     objectGet = S3Client.get_object(Bucket=Bucket, Key=InsertKey, ChecksumMode='ENABLED')["Body"].read()
+    import pandas as pd
     df = pd.read_parquet(BytesIO(objectGet))
 
     duration = datetime.now() - start
