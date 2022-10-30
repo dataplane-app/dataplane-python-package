@@ -2,7 +2,7 @@
 The data engineering library to build robust, reliable and on time data pipelines in Python.
 
 ### To use with Dataplane Data Platform
-Install Python Package on Dataplane: https://learn.dataplane.app/installing-python-packages
+Install Python Package on Dataplane: https://learn.dataplane.app/installing-python-packages<br />
 Recipes to use Dataplane Python Package: https://recipes.dataplane.app/office-365/sharepoint-api
 
 ### Run tests in repo root
