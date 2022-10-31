@@ -6,7 +6,7 @@ from nanoid import generate
 import os
 from dotenv import load_dotenv
 
-def test_sharepoint():
+def test_sharepoint_object():
 
     # ---------- DATAPLANE RUN ------------
     
@@ -23,21 +23,25 @@ def test_sharepoint():
     AZURE_TENANT_ID = os.getenv('AZURE_TENANT_ID')
     CURRENT_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
 
-    if os.path.exists(CURRENT_DIRECTORY+"/test_cities_delete.csv"):
-        os.remove(CURRENT_DIRECTORY+"/test_cities_delete.csv")
+    if os.path.exists(CURRENT_DIRECTORY+"/test_cities_delete_object.csv"):
+        os.remove(CURRENT_DIRECTORY+"/test_cities_delete_object.csv")
 
     # ---------- STORE File to Sharepoint ------------
     # SharepointUpload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, FileDescription="", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail")
     print(CURRENT_DIRECTORY)
+
+    FileSize = os.path.getsize(CURRENT_DIRECTORY+"/test_cities.csv")
+    print("File size dir:", FileSize)
+    UploadObject = open(CURRENT_DIRECTORY+"/test_cities.csv", 'rb').read()
     # Store the data with key hello - run id will be attached
     rs = sharepoint_upload(Host=HOST, 
     TenantID=AZURE_TENANT_ID, 
     ClientID=AZURE_CLIENT_ID, 
     Secret=AZURE_CLIENT_SECRET, 
     SiteName="Dataplane Python", 
-    TargetFilePath=f"/General/myfile {RUN_ID}.csv",
-    SourceFilePath=CURRENT_DIRECTORY+"/test_cities.csv",
-    UploadMethod="File"
+    TargetFilePath=f"/General/object myfile {RUN_ID}.csv",
+    UploadObject=UploadObject,
+    UploadMethod="Object"
     )
     print(rs)
     assert rs["result"]=="OK"
@@ -50,12 +54,14 @@ def test_sharepoint():
     ClientID=AZURE_CLIENT_ID, 
     Secret=AZURE_CLIENT_SECRET, 
     SiteName="Dataplane Python", 
-    SharepointFilePath=f"/General/myfile {RUN_ID}.csv",
-    LocalFilePath=CURRENT_DIRECTORY+"/test_cities_delete.csv",
-    DownloadMethod="File",
+    SharepointFilePath=f"/General/object myfile {RUN_ID}.csv",
+    DownloadMethod="Object",
     ProxyUse=False, ProxyUrl="", ProxyMethod="https")
-    print(rs)
+    # print(rs)
     assert rs["result"]=="OK"
+
+    with open(CURRENT_DIRECTORY+"/test_cities_delete_object.csv", 'wb') as f:
+        f.write(rs["content"])
     # Get the data
     # rsget = S3Get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)
     # print(rsget)

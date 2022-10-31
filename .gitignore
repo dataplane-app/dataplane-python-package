@@ -129,4 +129,5 @@ dmypy.json
 .pyre/
 
 test_cities_delete.csv
-test_cities_delete_2.csv
+test_cities_delete_object.csv
+test_cities_delete_non_root.csv

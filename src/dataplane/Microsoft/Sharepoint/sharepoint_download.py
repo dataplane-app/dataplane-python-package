@@ -1,9 +1,3 @@
-
-import requests
-import os
-from datetime import datetime
-import json
-
 """ Host: {name}.sharepoint.com 
 TenantID: Directory or TenantID as per Azure portal
 ClientID: Azure Client ID or Application ID.
@@ -14,7 +8,11 @@ ProxyUse: Whether to use a proxy, true or false
 ProxyUrl: Proxy endpoint to use
 ProxyMethod: https or http, default https
 """
-def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePath, SharepointFilePath, Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
+def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointFilePath, DownloadMethod="Object", LocalFilePath="", Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
+
+    import requests
+    from datetime import datetime
+    import json
 
     # Start the timer
     start  = datetime.now()
@@ -55,7 +53,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePat
 
     # ======= Get Site ID from Site name ====
     SiteName = SiteName.replace(" ", "")
-    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}", headers=headers, json=payload, proxies=proxies)
+    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}?$select=id", headers=headers, json=payload, proxies=proxies)
     
     if SiteID.status_code != 200:
         duration = datetime.now() - start
@@ -104,10 +102,13 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName, LocalFilePat
 
     # ====== Download file using link =====
     r = requests.get(ItemID["@microsoft.graph.downloadUrl"])  
-    with open(LocalFilePath, 'wb') as f:
-        f.write(r.content)
+
+    if DownloadMethod == "File":
+        with open(LocalFilePath, 'wb') as f:
+            f.write(r.content)
+        duration = datetime.now() - start
+        return {"result":"OK", "duration": str(duration), "status": r.status_code, "FilePath": LocalFilePath} 
 
 
     duration = datetime.now() - start
-
-    return {"result":"OK", "duration": str(duration), "status": r.status_code, "FilePath": LocalFilePath} 
+    return {"result":"OK", "duration": str(duration), "status": r.status_code, "content": r.content} 

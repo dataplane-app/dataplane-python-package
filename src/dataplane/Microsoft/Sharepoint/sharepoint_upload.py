@@ -1,21 +1,25 @@
-import requests
-import os
-from datetime import datetime
-import json
-
 """ Host: {name}.sharepoint.com 
 TenantID: Directory or TenantID as per Azure portal
 ClientID: Azure Client ID or Application ID.
 Secret: Azure secret for client ID.
 SiteName: Name of the site to be looked up <- in url e.g https://{name}.sharepoint.com/sites/DataplanePython
-FilePath: /General/hello.xlxs
+SourceFilePath: /tmp/source.xlsx (needs UploadMethod="File")
+TargetFilePath: /General/hello.xlxs
+UploadMethod
 ProxyUse: Whether to use a proxy, true or false
 ProxyUrl: Proxy endpoint to use
 ProxyMethod: https or http, default https
 FileConflict: "fail (default) | replace | rename"
 FileDescription: Sharepoint description for the file
 """
-def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath, Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
+def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath="/tmp/default.txt", Library="root", UploadMethod="Object", UploadObject="", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
+
+
+    import requests
+    import os
+    from datetime import datetime
+    import json
+    import sys
 
     # Start the timer
     start  = datetime.now()
@@ -95,7 +99,12 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
     
     # https://graph.microsoft.com/v1.0/sites/{name}.sharepoint.com/drive/root:/test/testing.xlsx:/createUploadSession
     
-    FileSize = os.path.getsize(SourceFilePath)
+    if UploadMethod =="File":
+        FileSize = os.path.getsize(SourceFilePath)
+    
+    if UploadMethod=="Object":
+        FileSize=len(UploadObject)
+        print("File size:", FileSize)
 
     payload = {
         "@microsoft.graph.conflictBehavior": FileConflict,
@@ -112,7 +121,8 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
 
 
     # ====== Obtain the file from disk ======
-    uploadData = open(SourceFilePath, 'rb').read()
+    if UploadMethod =="File":
+        UploadObject = open(SourceFilePath, 'rb').read()
 
     # ====== Upload file using link ===== uploadUrl
     headers = {
@@ -122,7 +132,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
         # "Authorization": "Bearer " + auth["access_token"]
     }
 
-    upload = requests.put(UploadUrl["uploadUrl"], data=uploadData, headers=headers, proxies=proxies)
+    upload = requests.put(UploadUrl["uploadUrl"], data=UploadObject, headers=headers, proxies=proxies)
     if upload.status_code != 201:
         duration = datetime.now() - start
         return {"result":"Fail", "reason":"Upload file", "duration": str(duration), "status": upload.status_code, "error": upload.json()} 
