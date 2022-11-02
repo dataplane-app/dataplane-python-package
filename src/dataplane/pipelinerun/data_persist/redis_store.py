@@ -1,9 +1,9 @@
-import os
-import io
-from datetime import datetime, timedelta
-import redis
+from datetime import timedelta
 
 def RedisCheck(r):
+
+    import redis
+
     try:
         r.ping()
     except (redis.exceptions.ConnectionError, ConnectionRefusedError):
@@ -18,6 +18,10 @@ Expire: Expires the data if true.
 ExpireDuration: If expires is true, how much time to expire. Default 15 mins
 """
 def pipeline_redis_store(StoreKey, DataFrame, Redis, Expire=True, ExpireDuration=timedelta(minutes=15)):
+
+    import os
+    import io
+    from datetime import datetime
 
     # Start the timer
     start  = datetime.now()
@@ -47,6 +51,10 @@ StoreKey: is the key to look up for retrieval (set with RedisStore).
 Redis: e.g. Redis = redis.Redis(host='redis-service', port=6379, db=0)
 """
 def pipeline_redis_get(StoreKey, Redis):
+
+    import os
+    import io
+    from datetime import datetime
 
     # Start the timer
     start  = datetime.now()

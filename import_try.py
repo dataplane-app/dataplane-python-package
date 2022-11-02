@@ -6,8 +6,6 @@ from dataplane import hello
 
 duration = datetime.now() - start
 
-print(hello())
+hello()
 
 print(duration)
-
-
