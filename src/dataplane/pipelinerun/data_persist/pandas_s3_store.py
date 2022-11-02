@@ -1,9 +1,7 @@
 
 
 # import requests
-import os
-from io import BytesIO
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 """ StoreKey: is the key to look up for retrieval later on. 
 S3Client: e.g. S3Client = boto3.client(...)
@@ -12,7 +10,11 @@ DataFrame: Pandas dataframe to pass
 Expire: Expires the data if true.
 ExpireDuration: If expires is true, how much time to expire. Default 15 mins
 """
-def pipeline_s3_store(StoreKey, DataFrame, S3Client, Bucket, Expire=True, ExpireDuration=timedelta(days=30)):
+def pipeline_pandas_s3_store(StoreKey, DataFrame, S3Client, Bucket, Expire=True, ExpireDuration=timedelta(days=30)):
+
+    import os
+    from io import BytesIO
+    from datetime import datetime
 
     # Start the timer
     start  = datetime.now()
@@ -33,7 +35,11 @@ StoreKey: is the key to look up for retrieval (set with RedisStore).
 S3Client: e.g. S3Client = boto3.client(...)
 Bucket: Name of the s3 bucket
 """
-def pipeline_s3_get(StoreKey, S3Client, Bucket):
+def pipeline_pandas_s3_get(StoreKey, S3Client, Bucket):
+
+    import os
+    from io import BytesIO
+    from datetime import datetime
 
     # Start the timer
     start  = datetime.now()

@@ -16,6 +16,6 @@ python3 -m twine upload dist/*
 
 4. Testing impport times - lazy loading:
 ```shell
-pip install dataplane==0.0.11
+pip install dataplane==0.0.12
 python -v import_try.py
 ```
