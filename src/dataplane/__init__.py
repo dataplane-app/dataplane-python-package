@@ -17,6 +17,9 @@ from dataplane.Microsoft.Teams.webhook_send import teams_webhook_send
 from dataplane.Microsoft.Sharepoint.sharepoint_download import sharepoint_download
 from dataplane.Microsoft.Sharepoint.sharepoint_upload import sharepoint_upload
 
+# Data storage
+from dataplane.DataStorage.s3.s3_download import s3_download
+from dataplane.DataStorage.s3.s3_upload import s3_upload
 
 __all__ = [
 
@@ -33,5 +36,9 @@ __all__ = [
     "teams_webhook_send",
     "sharepoint_download", 
     "sharepoint_upload",
+
+    # Data storage providers
+    "s3_download",
+    "s3_upload"
 
     ]

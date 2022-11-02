@@ -1,10 +1,12 @@
 
 import os
-from dataplane.DataStorage.s3.s3_upload import s3_upload
-from dataplane.DataStorage.s3.s3_download import s3_download
+from .s3_upload import s3_upload
+from .s3_download import s3_download
 from nanoid import generate
 import os
 from dotenv import load_dotenv
+import boto3
+from botocore.client import Config
 
 def test_s3():
 
@@ -15,11 +17,21 @@ def test_s3():
 
     # Sharepoint connection
     load_dotenv()
-
     RUN_ID = os.environ["DP_RUNID"]
-    BUCKET = os.getenv('BUCKET')
-    ACCESS_KEY = os.getenv('ACCESS_KEY')
-    SECRET_KEY = os.getenv('SECRET_KEY')
+
+        # S3 connection
+    S3Connect = boto3.client(
+        's3',
+        endpoint_url="http://minio:9000",
+        aws_access_key_id="admin",
+        aws_secret_access_key="hello123",
+        config=Config(signature_version='s3v4'),
+        region_name='us-east-1'
+
+    )
+
+    bucket = "dataplanebucket"
+
     CURRENT_DIRECTORY = os.path.realpath(os.path.dirname(__file__))
 
     if os.path.exists(CURRENT_DIRECTORY+"/test_cities_delete.csv"):
@@ -29,13 +41,11 @@ def test_s3():
     # s3_upload(Bucket, AccessKey, SecretKey, TargetFilePath, SourceFilePath="/tmp/default.txt", UploadMethod="Object", UploadObject="", ProxyUse=False, ProxyUrl="", ProxyMethod="https", EndPointUrl=None)
     print(CURRENT_DIRECTORY)
     # Store the data with key hello - run id will be attached
-    rs = s3_upload(Bucket=BUCKET,
-    AccessKey=ACCESS_KEY, 
-    SecretKey=SECRET_KEY,
-    TargetFilePath=f"/General/myfile {RUN_ID}.csv",
-    SourceFilePath=CURRENT_DIRECTORY+"/test_cities.csv",
-    UploadMethod="File",
-    EndPointUrl="http://minio:9000"
+    rs = s3_upload(Bucket=bucket,
+    S3Client=S3Connect,
+    TargetFilePath=f"/s3test/myfile {RUN_ID}.csv",
+    SourceFilePath=CURRENT_DIRECTORY+"/test_s3_cities.csv",
+    UploadMethod="File"
     )
     print(rs)
     assert rs["result"]=="OK"
@@ -43,14 +53,11 @@ def test_s3():
 
     # ---------- RETRIEVE PARQUET FROM S3 ------------
 
-    rs = s3_download(Bucket=BUCKET, 
-    AccessKey=ACCESS_KEY, 
-    SecretKey=SECRET_KEY,
-    S3FilePath=f"/General/myfile {RUN_ID}.csv",
+    rs = s3_download(Bucket=bucket,
+    S3Client=S3Connect,
+    S3FilePath=f"/s3test/myfile {RUN_ID}.csv",
     LocalFilePath=CURRENT_DIRECTORY+"/test_cities_delete.csv",
-    DownloadMethod="File",
-    ProxyUse=False, ProxyUrl="", ProxyMethod="https",
-    EndPointUrl='http://minio:9000'
+    DownloadMethod="File"
     )
     print(rs)
     assert rs["result"]=="OK"
