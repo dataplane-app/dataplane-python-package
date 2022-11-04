@@ -5,10 +5,15 @@ from .pandas_redis_store import pipeline_pandas_redis_get
 import redis
 from datetime import timedelta
 from nanoid import generate
+from dotenv import load_dotenv
 
 def test_redis_store():
 
+    load_dotenv()
+
     # ---------- Dataplane pipeline run ------------
+    REDIS_HOST = os.environ["REDIS_HOST"]
+    print("Redis:", REDIS_HOST)
     
     # Dataplane run id
     os.environ["DP_RUNID"] = generate('1234567890abcdef', 10)
@@ -23,7 +28,7 @@ def test_redis_store():
     dfrows = df.shape[0]
 
     # Redis connection
-    redisConnect = redis.Redis(host='redis-service', port=6379, db=0)
+    redisConnect = redis.Redis(host=REDIS_HOST, port=6379, db=0)
 
     
     # ---------- STORE PARQUET TO REDIS ------------

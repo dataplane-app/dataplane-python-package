@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+  minio:
+    command: server /data --console-address ":9001"
+    image: minio/minio:RELEASE.2022-10-15T19-57-03Z
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: hello123
+    volumes:
+      - miniovolume:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+  
+  createbuckets:
+    image: minio/mc:RELEASE.2022-10-12T18-12-50Z
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 admin hello123;
+      /usr/bin/mc mb myminio/dataplanebucket;
+      # /usr/bin/mc policy set public myminio/dataplanebucket;
+      exit 0;
+      "
+
+  redis-service:
+    image: redis:7.0.5-bullseye
+    ports:
+      - 6379:6379
+
+volumes:
+  miniovolume:
+  

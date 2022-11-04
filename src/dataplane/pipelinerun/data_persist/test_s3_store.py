@@ -5,8 +5,11 @@ from .pandas_s3_store import pipeline_pandas_s3_get
 import boto3
 from botocore.client import Config
 from nanoid import generate
+from dotenv import load_dotenv
 
 def test_s3_store():
+
+    load_dotenv()
 
     # ---------- DATAPLANE RUN ------------
     
@@ -22,10 +25,12 @@ def test_s3_store():
     df = pd.DataFrame(data)
     dfrows = df.shape[0]
 
+    S3_HOST = os.environ["S3_HOST"]
+
     # S3 connection
     S3Connect = boto3.client(
         's3',
-        endpoint_url="http://minio:9000",
+        endpoint_url=S3_HOST,
         aws_access_key_id="admin",
         aws_secret_access_key="hello123",
         config=Config(signature_version='s3v4'),
