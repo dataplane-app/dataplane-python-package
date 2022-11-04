@@ -19,10 +19,12 @@ def test_s3():
     load_dotenv()
     RUN_ID = os.environ["DP_RUNID"]
 
+    S3_HOST = os.environ["S3_HOST"]
+
         # S3 connection
     S3Connect = boto3.client(
         's3',
-        endpoint_url="http://minio:9000",
+        endpoint_url=S3_HOST,
         aws_access_key_id="admin",
         aws_secret_access_key="hello123",
         config=Config(signature_version='s3v4'),
@@ -43,7 +45,7 @@ def test_s3():
     # Store the data with key hello - run id will be attached
     rs = s3_upload(Bucket=bucket,
     S3Client=S3Connect,
-    TargetFilePath=f"/s3test/myfile {RUN_ID}.csv",
+    TargetFilePath=f"s3test/myfile {RUN_ID}.csv",
     SourceFilePath=CURRENT_DIRECTORY+"/test_s3_cities.csv",
     UploadMethod="File"
     )
@@ -55,7 +57,7 @@ def test_s3():
 
     rs = s3_download(Bucket=bucket,
     S3Client=S3Connect,
-    S3FilePath=f"/s3test/myfile {RUN_ID}.csv",
+    S3FilePath=f"s3test/myfile {RUN_ID}.csv",
     LocalFilePath=CURRENT_DIRECTORY+"/test_cities_delete.csv",
     DownloadMethod="File"
     )

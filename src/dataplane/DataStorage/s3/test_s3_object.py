@@ -15,15 +15,16 @@ def test_s3_object():
     # Dataplane run id
     os.environ["DP_RUNID"] = generate('1234567890abcdef', 10)
 
-    # Sharepoint connection
     load_dotenv()
 
     RUN_ID = os.environ["DP_RUNID"]
 
+    S3_HOST = os.environ["S3_HOST"]
+
         # S3 connection
     S3Connect = boto3.client(
         's3',
-        endpoint_url="http://minio:9000",
+        endpoint_url=S3_HOST,
         aws_access_key_id="admin",
         aws_secret_access_key="hello123",
         config=Config(signature_version='s3v4'),
@@ -48,7 +49,7 @@ def test_s3_object():
     # Store the data with key hello - run id will be attached
     rs = s3_upload(Bucket=bucket, 
     S3Client=S3Connect,
-    TargetFilePath=f"/s3test/object myfile {RUN_ID}.csv",
+    TargetFilePath=f"s3test/object myfile {RUN_ID}.csv",
     UploadObject=UploadObject,
     UploadMethod="Object"
     )
@@ -59,7 +60,7 @@ def test_s3_object():
     # ---------- RETRIEVE FILE FROM S3 ------------
     rs = s3_download(Bucket=bucket, 
     S3Client=S3Connect,
-    S3FilePath=f"/s3test/object myfile {RUN_ID}.csv",
+    S3FilePath=f"s3test/object myfile {RUN_ID}.csv",
     DownloadMethod="Object"
     )
     print(rs)
