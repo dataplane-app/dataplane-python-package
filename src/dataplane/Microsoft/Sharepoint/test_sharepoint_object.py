@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from .sharepoint_upload import sharepoint_upload
 from .sharepoint_download import sharepoint_download
 from nanoid import generate
+from io import BytesIO
 
 def test_sharepoint_object():
 
@@ -43,7 +44,7 @@ def test_sharepoint_object():
     UploadObject=UploadObject,
     UploadMethod="Object"
     )
-    print(rs)
+    # print(rs)
     assert rs["result"]=="OK"
 
 
@@ -65,8 +66,10 @@ def test_sharepoint_object():
     # Get the data
     # rsget = S3Get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)
     # print(rsget)
-    df = read_csv(rs["content"])
+    df = read_csv(BytesIO(rs["content"]))
+    print(df.head(3))
     # print(df.shape[0])
+    assert df.shape[0]==13
     # # Test before and after rows
     # assert df.shape[0] == dfrows
     # assert rsget["result"]=="OK"

@@ -39,7 +39,7 @@ def test_sharepoint():
     SourceFilePath=CURRENT_DIRECTORY+"/test_cities.csv",
     UploadMethod="File"
     )
-    print(rs)
+    # print(rs)
     assert rs["result"]=="OK"
 
 
@@ -54,7 +54,7 @@ def test_sharepoint():
     LocalFilePath=CURRENT_DIRECTORY+"/test_cities_delete.csv",
     DownloadMethod="File",
     ProxyUse=False, ProxyUrl="", ProxyMethod="https")
-    print(rs)
+    # print(rs)
     assert rs["result"]=="OK"
     # Get the data
     # rsget = S3Get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)

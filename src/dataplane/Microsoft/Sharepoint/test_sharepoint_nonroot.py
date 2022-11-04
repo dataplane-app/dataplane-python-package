@@ -40,7 +40,7 @@ def test_sharepoint_nonroot():
     Library="Doc library 2",
     UploadMethod="File"
     )
-    print(rs)
+    # print(rs)
     assert rs["result"]=="OK"
 
 
@@ -56,7 +56,7 @@ def test_sharepoint_nonroot():
     Library="Doc library 2",
     DownloadMethod="File",
     ProxyUse=False, ProxyUrl="", ProxyMethod="https")
-    print(rs)
+    # print(rs)
     assert rs["result"]=="OK"
     # Get the data
     # rsget = S3Get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)

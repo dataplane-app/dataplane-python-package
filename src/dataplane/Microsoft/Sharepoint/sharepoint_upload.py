@@ -60,7 +60,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
 
     # ======= Get Site ID from Site name ====
     SiteName = SiteName.replace(" ", "")
-    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}", headers=headers, json=payload, proxies=proxies)
+    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}?$select=id", headers=headers, json=payload, proxies=proxies)
     
     if SiteID.status_code != 200:
         duration = datetime.now() - start
