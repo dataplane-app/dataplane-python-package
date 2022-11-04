@@ -1,10 +1,10 @@
 
 import os
+from pandas import read_csv
+from dotenv import load_dotenv
 from .sharepoint_upload import sharepoint_upload
 from .sharepoint_download import sharepoint_download
 from nanoid import generate
-import os
-from dotenv import load_dotenv
 
 def test_sharepoint_object():
 
@@ -65,7 +65,7 @@ def test_sharepoint_object():
     # Get the data
     # rsget = S3Get(StoreKey="s3me", S3Client=S3Connect, Bucket=bucket)
     # print(rsget)
-    # df = rsget["dataframe"]
+    df = read_csv(rs["content"])
     # print(df.shape[0])
     # # Test before and after rows
     # assert df.shape[0] == dfrows

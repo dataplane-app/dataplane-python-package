@@ -101,7 +101,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
 
 
     # ====== Download file using link =====
-    r = requests.get(ItemID["@microsoft.graph.downloadUrl"])  
+    r = requests.get(ItemID["@microsoft.graph.downloadUrl"], proxies=proxies)  
 
     if DownloadMethod == "File":
         with open(LocalFilePath, 'wb') as f:
