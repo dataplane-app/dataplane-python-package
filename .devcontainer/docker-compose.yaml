@@ -67,7 +67,29 @@ services:
     #   - SYS_PTRACE
     # security_opt:
     #   - seccomp:unconfined
+  hydra:
+    container_name: hydra
+    image: ghcr.io/hydrasdb/hydra:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: hello123
+    volumes:
+      - hydravolume:/var/lib/postgresql/data
+  
+
+  createdatabase:
+    image: ghcr.io/hydrasdb/hydra:latest
+    depends_on:
+      - hydra
+    entrypoint: >
+      /bin/sh -c "
+      PGPASSWORD=hello123 /usr/bin/psql -h hydra --user admin -c 'create database dataplanedb;';
+      exit 0;
+      "
 
 volumes:
   miniovolume:
+  hydravolume:
   

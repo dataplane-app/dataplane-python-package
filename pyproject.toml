@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0","redis>=1.0.0","pyarrow>1.0.0", "pandas>1.0.0", "requests>1.0.0"]
+requires = ["setuptools>=61.0","redis>=1.0.0","pyarrow>1.0.0", "pandas>1.0.0", "requests>1.0.0", "SQLAlchemy>1.4.43", "psycopg2>2.9.5"]
 build-backend = "setuptools.build_meta"
 
 [project]
