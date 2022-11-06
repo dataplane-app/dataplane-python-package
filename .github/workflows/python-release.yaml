@@ -32,15 +32,15 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ steps.get_version.outputs.VERSION }}
-      
-      - name: Update pyproject.toml version ${{ steps.get_version.outputs.VERSION }}
-        run: python3 update_toml_release.py ${{ steps.get_version.outputs.VERSION }}
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python3 -m pip install --upgrade twine
           if [ -f tests/requirements.txt ]; then pip install -r tests/requirements.txt; fi
+
+      - name: Update pyproject.toml version ${{ steps.get_version.outputs.VERSION }}
+        run: python3 update_toml_release.py ${{ steps.get_version.outputs.VERSION }}
 
       - name: Build python package
         run: python3 -m build
