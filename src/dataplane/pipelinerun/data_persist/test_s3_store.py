@@ -15,6 +15,7 @@ def test_s3_store():
     
     # Dataplane run id
     os.environ["DP_RUNID"] = generate('1234567890abcdef', 10)
+    os.environ["DP_ENVID"] ="E1"
 
     # Data to store as parquet
     data = {

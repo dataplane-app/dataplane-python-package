@@ -18,8 +18,9 @@ def pipeline_pandas_s3_store(StoreKey, DataFrame, S3Client, Bucket, Expire=True,
 
     # Start the timer
     start  = datetime.now()
+    EnvID = os.getenv("DP_ENVID")
 
-    InsertKey = "/dataplane-transfer/" + StoreKey+ "-" +os.getenv("DP_RUNID")+".parquet"
+    InsertKey = f"/dataplane-transfer/{EnvID}/" + StoreKey+ "-" +os.getenv("DP_RUNID")+".parquet"
 
     output_buffer=BytesIO()
     DataFrame.to_parquet(output_buffer,index=False,compression='gzip',engine='pyarrow',allow_truncated_timestamps=True)
@@ -44,7 +45,9 @@ def pipeline_pandas_s3_get(StoreKey, S3Client, Bucket):
     # Start the timer
     start  = datetime.now()
 
-    InsertKey = "/dataplane-transfer/" + StoreKey+ "-" +os.getenv("DP_RUNID")+".parquet"
+    EnvID = os.getenv("DP_ENVID")
+
+    InsertKey = f"/dataplane-transfer/{EnvID}/" + StoreKey+ "-" +os.getenv("DP_RUNID")+".parquet"
 
     # Retrieve dataframe from key
     # buffer = BytesIO()
