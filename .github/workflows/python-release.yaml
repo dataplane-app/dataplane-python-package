@@ -49,6 +49,16 @@ jobs:
       - name: Distribute python package
         run: python3 -m twine upload dist/* -u "__token__" -p ${{ secrets.PYPI_API_TOKEN }}
 
+      - uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python3 -m pip install --upgrade toml
+
+      - name: Update pyproject.toml version ${{ steps.get_version.outputs.VERSION }}
+        run: python3 update_toml_release.py ${{ steps.get_version.outputs.VERSION }}
+
       - name: Commit report
         continue-on-error: true
         run: |
