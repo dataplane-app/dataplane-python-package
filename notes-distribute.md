@@ -1,3 +1,11 @@
+### Github Actions Release
+1. Update release with latest version
+2. Github Actions will release to PyPI with that version
+3. Automatically update toml and git commit to main
+```shell
+python update_toml_release.py 0.0.15
+```
+
 ### Steps to distribute
 
 1. Update toml with latest version
