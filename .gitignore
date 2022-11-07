@@ -131,3 +131,5 @@ dmypy.json
 test_cities_delete.csv
 test_cities_delete_object.csv
 test_cities_delete_non_root.csv
+
+.vscode/
