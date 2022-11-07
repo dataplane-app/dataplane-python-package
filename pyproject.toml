@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dataplane"
-version = "0.0.14"
+version = "0.0.0"
 description = "The data engineering library to build robust, reliable and on time data pipelines in Python."
 readme = "README.md"
 requires-python = ">=3.7"
