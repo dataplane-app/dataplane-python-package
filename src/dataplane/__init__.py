@@ -3,6 +3,11 @@ from dataplane.pipelinerun.data_persist.pandas_redis_store import (
     pipeline_pandas_redis_get,
 )
 
+from dataplane.pipelinerun.data_persist.redis_store import (
+    pipeline_redis_store,
+    pipeline_redis_get,
+)
+
 from dataplane.pipelinerun.data_persist.pandas_s3_store import (
     pipeline_pandas_s3_get,
     pipeline_pandas_s3_store,
@@ -27,6 +32,8 @@ __all__ = [
     "hello",
 
     # Pipeline transfers
+    "pipeline_redis_store", 
+    "pipeline_redis_get", 
     "pipeline_pandas_redis_store", 
     "pipeline_pandas_redis_get", 
     "pipeline_pandas_s3_get", 
