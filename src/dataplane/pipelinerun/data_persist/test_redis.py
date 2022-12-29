@@ -34,5 +34,5 @@ def test_redis_store():
     # Get the data
     rsget = pipeline_redis_get(StoreKey="hello", Redis=redisConnect)
     # Test before and after rows
-    assert rsget["value"] == data
+    assert rsget["value"].decode("utf-8") == data
     assert rsget["result"]=="OK"
