@@ -33,7 +33,7 @@ def pipeline_pandas_redis_store(StoreKey, DataFrame, Redis, Expire=True, ExpireD
         raise Exception("Redis connection failed.")
 
     buffer = io.BytesIO()
-    DataFrame.to_parquet(buffer, compression='gzip')
+    DataFrame.to_pickle(buffer, compression='gzip')
     buffer.seek(0) # re-set the pointer to the beginning after reading
 
     if Expire:
@@ -69,7 +69,7 @@ def pipeline_pandas_redis_get(StoreKey, Redis):
     buffer = io.BytesIO(Redis.get(InsertKey))
     buffer.seek(0)
     import pandas as pd
-    df = pd.read_parquet(buffer)
+    df = pd.read_pickle(buffer,compression='gzip')
 
     duration = datetime.now() - start
 

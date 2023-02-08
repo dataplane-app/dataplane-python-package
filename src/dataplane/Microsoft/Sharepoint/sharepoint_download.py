@@ -95,7 +95,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
     
     if ItemID.status_code != 200:
         duration = datetime.now() - start
-        return {"result":"Fail", "reason":"Get upload session", "duration": str(duration), "status": ItemID.status_code, "error": ItemID.json(), "payload": json.dumps(payload), "url": url} 
+        return {"result":"Fail", "reason":"Get download session", "duration": str(duration), "status": ItemID.status_code, "error": ItemID.json(), "payload": json.dumps(payload), "url": url} 
     
     ItemID = ItemID.json()
 

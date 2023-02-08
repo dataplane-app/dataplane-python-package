@@ -135,7 +135,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
     upload = requests.put(UploadUrl["uploadUrl"], data=UploadObject, headers=headers, proxies=proxies)
     if upload.status_code != 201:
         duration = datetime.now() - start
-        return {"result":"Fail", "reason":"Upload file", "duration": str(duration), "status": upload.status_code, "error": upload.json()} 
+        return {"result":"non 201", "reason":"Upload file", "duration": str(duration), "status": upload.status_code, "response": upload.json()}
 
     duration = datetime.now() - start
 

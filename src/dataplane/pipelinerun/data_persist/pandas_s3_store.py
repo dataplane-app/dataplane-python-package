@@ -23,7 +23,7 @@ def pipeline_pandas_s3_store(StoreKey, DataFrame, S3Client, Bucket, Expire=True,
     InsertKey = f"/dataplane-transfer/{EnvID}/" + StoreKey+ "-" +os.getenv("DP_RUNID")+".parquet"
 
     output_buffer=BytesIO()
-    DataFrame.to_parquet(output_buffer,index=False,compression='gzip',engine='pyarrow',allow_truncated_timestamps=True)
+    DataFrame.to_pickle(output_buffer,compression='gzip')
     S3Client.put_object(Bucket=Bucket,Key=InsertKey,Body=output_buffer.getvalue())
     
     duration = datetime.now() - start
@@ -53,7 +53,7 @@ def pipeline_pandas_s3_get(StoreKey, S3Client, Bucket):
     # buffer = BytesIO()
     objectGet = S3Client.get_object(Bucket=Bucket, Key=InsertKey, ChecksumMode='ENABLED')["Body"].read()
     import pandas as pd
-    df = pd.read_parquet(BytesIO(objectGet))
+    df = pd.read_pickle(BytesIO(objectGet),compression='gzip')
 
     duration = datetime.now() - start
 
