@@ -6,7 +6,7 @@ Download Method: File or Object
 FilePath: /General/hello.xlxs
 """
 
-def s3_download(S3Client, Bucket,  S3FilePath, DownloadMethod="Object", LocalFilePath=""):
+def s3_download(S3Client, Bucket,  S3FilePath, DownloadMethod="Object", LocalFilePath="", ChecksumMode=''):
     
     from datetime import datetime
     from io import BytesIO
@@ -29,7 +29,10 @@ def s3_download(S3Client, Bucket,  S3FilePath, DownloadMethod="Object", LocalFil
         return {"result":"OK", "duration": str(duration), "FilePath": LocalFilePath} 
 
     # Download S3 file content to object
-    objectGet = S3Client.get_object(Bucket=Bucket, Key=S3FilePath, ChecksumMode='ENABLED')["Body"].read()
+    if ChecksumMode=="ENABLED":
+        objectGet = S3Client.get_object(Bucket=Bucket, Key=S3FilePath, ChecksumMode='ENABLED')["Body"].read()
+    else:
+        objectGet = S3Client.get_object(Bucket=Bucket, Key=S3FilePath)["Body"].read()
     
     duration = datetime.now() - start
     return {"result":"OK", "duration": str(duration), "content": objectGet} 
