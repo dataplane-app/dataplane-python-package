@@ -14,7 +14,7 @@ keywords = [ "workflow", "data-science", "data", "airflow", "etl", "dataplane", 
 name = "Saul Frank"
 
 [[project.authors]]
-name = "Dataplane, Inc."
+name = "Dataplane Automation Limited"
 
 [project.urls]
 Homepage = "https://dataplane.app"
