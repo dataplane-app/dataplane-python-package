@@ -12,7 +12,7 @@ ProxyMethod: https or http, default https
 FileConflict: "fail (default) | replace | rename"
 FileDescription: Sharepoint description for the file
 """
-def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath="/tmp/default.txt", Library="root", UploadMethod="Object", UploadObject="", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail"):
+def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath, SourceFilePath="/tmp/default.txt", Library="root", UploadMethod="Object", UploadObject="", ProxyUse=False, ProxyUrl="", ProxyMethod="https", FileConflict="fail", SSLVerify=True):
 
 
     import requests
@@ -44,7 +44,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
     else:
         proxies = {}
 
-    auth = requests.request("POST", url, headers=headers, data=payload, proxies=proxies)
+    auth = requests.request("POST", url, headers=headers, data=payload, proxies=proxies, verify=SSLVerify)
     
     if auth.status_code != 200:
         duration = datetime.now() - start
@@ -60,7 +60,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
 
     # ======= Get Site ID from Site name ====
     SiteName = SiteName.replace(" ", "")
-    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}?$select=id", headers=headers, json=payload, proxies=proxies)
+    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}?$select=id", headers=headers, json=payload, proxies=proxies, verify=SSLVerify)
     
     if SiteID.status_code != 200:
         duration = datetime.now() - start
@@ -80,7 +80,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
     else:
 
         drive = ""
-        driveID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives?$select=name,id", headers=headers, json=payload, proxies=proxies)
+        driveID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives?$select=name,id", headers=headers, json=payload, proxies=proxies, verify=SSLVerify)
         if driveID.status_code != 200:
             duration = datetime.now() - start
             return {"result":"Fail", "reason":"Sharepoint get drives", "duration": str(duration), "status": driveID.status_code, "error": driveID.json()} 
@@ -111,7 +111,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
         "fileSize": FileSize,
         "name": TargetFilePath
     }
-    UploadUrl = requests.request("POST", url, headers=headers, json=payload, proxies=proxies)
+    UploadUrl = requests.request("POST", url, headers=headers, json=payload, proxies=proxies, verify=SSLVerify)
     
     if UploadUrl.status_code != 200:
         duration = datetime.now() - start
@@ -132,7 +132,7 @@ def sharepoint_upload(Host, TenantID, ClientID, Secret, SiteName, TargetFilePath
         # "Authorization": "Bearer " + auth["access_token"]
     }
 
-    upload = requests.put(UploadUrl["uploadUrl"], data=UploadObject, headers=headers, proxies=proxies)
+    upload = requests.put(UploadUrl["uploadUrl"], data=UploadObject, headers=headers, proxies=proxies, verify=SSLVerify)
     if upload.status_code != 201:
         duration = datetime.now() - start
         return {"result":"non 201", "reason":"Upload file", "duration": str(duration), "status": upload.status_code, "response": upload.json()}

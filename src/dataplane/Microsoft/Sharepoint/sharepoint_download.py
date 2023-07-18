@@ -8,7 +8,7 @@ ProxyUse: Whether to use a proxy, true or false
 ProxyUrl: Proxy endpoint to use
 ProxyMethod: https or http, default https
 """
-def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointFilePath, DownloadMethod="Object", LocalFilePath="", Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https"):
+def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointFilePath, DownloadMethod="Object", LocalFilePath="", Library="root", ProxyUse=False, ProxyUrl="", ProxyMethod="https", SSLVerify=True):
 
     import requests
     from datetime import datetime
@@ -37,7 +37,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
     else:
         proxies = {}
 
-    auth = requests.request("POST", url, headers=headers, data=payload, proxies=proxies)
+    auth = requests.request("POST", url, headers=headers, data=payload, proxies=proxies, verify=SSLVerify)
     
     if auth.status_code != 200:
         duration = datetime.now() - start
@@ -53,7 +53,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
 
     # ======= Get Site ID from Site name ====
     SiteName = SiteName.replace(" ", "")
-    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}?$select=id", headers=headers, json=payload, proxies=proxies)
+    SiteID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{Host}:/sites/{SiteName}?$select=id", headers=headers, json=payload, proxies=proxies, verify=SSLVerify)
     
     if SiteID.status_code != 200:
         duration = datetime.now() - start
@@ -71,7 +71,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
     else:
 
         drive = ""
-        driveID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives?$select=name,id", headers=headers, json=payload, proxies=proxies)
+        driveID = requests.request("GET", f"https://graph.microsoft.com/v1.0/sites/{SiteID['id']}/drives?$select=name,id", headers=headers, json=payload, proxies=proxies, verify=SSLVerify)
         if driveID.status_code != 200:
             duration = datetime.now() - start
             return {"result":"Fail", "reason":"Sharepoint get drives", "duration": str(duration), "status": driveID.status_code, "error": driveID.json()} 
@@ -91,7 +91,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
     # ====== Get Item ID =====
 
     
-    ItemID = requests.request("GET", url, headers=headers, json=payload, proxies=proxies)
+    ItemID = requests.request("GET", url, headers=headers, json=payload, proxies=proxies, verify=SSLVerify)
     
     if ItemID.status_code != 200:
         duration = datetime.now() - start
@@ -101,7 +101,7 @@ def sharepoint_download(Host, TenantID, ClientID, Secret, SiteName,  SharepointF
 
 
     # ====== Download file using link =====
-    r = requests.get(ItemID["@microsoft.graph.downloadUrl"], proxies=proxies)  
+    r = requests.get(ItemID["@microsoft.graph.downloadUrl"], proxies=proxies, verify=SSLVerify)  
 
     if DownloadMethod == "File":
         with open(LocalFilePath, 'wb') as f:
